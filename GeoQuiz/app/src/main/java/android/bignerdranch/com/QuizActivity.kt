@@ -1,5 +1,7 @@
 package android.bignerdranch.com
 
+import android.app.Activity
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -9,14 +11,17 @@ import android.widget.TextView
 import android.widget.Toast
 
 class QuizActivity : AppCompatActivity() {
+	companion object {
+		private const val TAG = "QuizActivity"
+		private const val KEY_INDEX = "index"
+		private const val REQUEST_CODE_CHEAT = 0
+	}
 	private var mTrueButton: Button? = null
 	private var mFalseButton: Button? = null
 	private var mPreviousButton: ImageButton? = null
 	private var mNextButton: ImageButton? = null
+	private var mCheatButton: Button? = null
 	private var mQuestionTextView: TextView? = null
-
-	private val TAG = "QuizActivity"
-	private val KEY_INDEX = "index"
 
 	private var mQuestionBank: Array<Question> = arrayOf(
 		Question(R.string.question_australia, true),
@@ -28,6 +33,7 @@ class QuizActivity : AppCompatActivity() {
 	)
 
 	private var mCurrentIndex: Int = 0
+	private var mIsCheater: Boolean = false
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -52,14 +58,37 @@ class QuizActivity : AppCompatActivity() {
 		mPreviousButton = findViewById(R.id.previous_button)
 		mPreviousButton?.setOnClickListener {
 			mCurrentIndex = if (mCurrentIndex > 0) mCurrentIndex - 1 else mQuestionBank.size - 1
+			mIsCheater = false
 			updateQuestion()
 		}
 		mNextButton = findViewById(R.id.next_button)
 		mNextButton?.setOnClickListener {
 			mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.size
+			mIsCheater = false
 			updateQuestion()
 		}
+		mCheatButton = findViewById(R.id.cheat_button)
+		mCheatButton?.setOnClickListener {
+			/** Start CheatActivity **/
+			val answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue()
+			val intent = CheatActivity.newIntent(this, answerIsTrue!!)
+			startActivityForResult(intent, REQUEST_CODE_CHEAT)
+		}
 		updateQuestion()
+	}
+
+	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+		super.onActivityResult(requestCode, resultCode, data)
+		if (resultCode != Activity.RESULT_OK) {
+			return
+		}
+
+		if (requestCode == REQUEST_CODE_CHEAT) {
+			if (data == null) {
+				return
+			}
+			mIsCheater = CheatActivity.wasAnswerShown(data)
+		}
 	}
 
 	private fun updateQuestion() {
@@ -70,11 +99,15 @@ class QuizActivity : AppCompatActivity() {
 	private fun checkAnswer(userPressedTrue: Boolean) {
 		val answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue()
 		var messageResId: Int
-		if (userPressedTrue == answerIsTrue) {
-			messageResId = R.string.correct_toast
+		if (mIsCheater) {
+			messageResId = R.string.judgment_toast
 		}
 		else {
-			messageResId = R.string.incorrect_toast
+			if (userPressedTrue == answerIsTrue) {
+				messageResId = R.string.correct_toast
+			} else {
+				messageResId = R.string.incorrect_toast
+			}
 		}
 		Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show()
 	}
