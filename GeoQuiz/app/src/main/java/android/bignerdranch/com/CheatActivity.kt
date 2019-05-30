@@ -1,10 +1,15 @@
 package android.bignerdranch.com
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import android.view.ViewAnimationUtils
 import android.widget.Button
 import android.widget.TextView
 
@@ -45,6 +50,23 @@ class CheatActivity : AppCompatActivity() {
                 mAnswerTextView?.setText(R.string.false_button)
             }
             setAnswerShownResult(true)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                val cx = mShowAnswerButton?.width?.div(2) ?: 0
+                val cy = mShowAnswerButton?.height?.div(2) ?: 0
+                val radius = mShowAnswerButton?.width
+                val anim = ViewAnimationUtils.createCircularReveal(mShowAnswerButton, cx, cy, radius!! * 1.0f, 0f)
+                anim.addListener(object : AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: Animator?) {
+                        super.onAnimationEnd(animation)
+                        mShowAnswerButton?.visibility = View.INVISIBLE
+                    }
+                })
+                anim.start()
+            }
+            else {
+                mShowAnswerButton?.visibility = View.INVISIBLE
+            }
         }
     }
 
