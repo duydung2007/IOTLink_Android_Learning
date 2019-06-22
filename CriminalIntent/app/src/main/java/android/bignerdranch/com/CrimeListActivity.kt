@@ -2,8 +2,9 @@ package android.bignerdranch.com
 
 import android.support.v4.app.Fragment
 
-class CrimeActivity : SingleFragmentActivity() {
+class CrimeListActivity : SingleFragmentActivity() {
     override fun createFragment(): Fragment {
-        return CrimeFragment()
+        return CrimeListFragment()
     }
+
 }
