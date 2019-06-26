@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 
@@ -35,10 +36,12 @@ class CrimeListFragment : Fragment() {
         : RecyclerView.ViewHolder(inflater.inflate(R.layout.list_item_crime, parent, false)), View.OnClickListener {
         private var mTitleTextView: TextView? = null
         private var mDateTextView: TextView? = null
+        private var mSolvedImageView: ImageView? = null
         private var mCrime: Crime? = null
         init {
             mTitleTextView = itemView.findViewById(R.id.crime_title) as TextView
             mDateTextView = itemView.findViewById(R.id.crime_date) as TextView
+            mSolvedImageView = itemView.findViewById(R.id.crime_solved) as ImageView
             itemView.setOnClickListener(this)
         }
 
@@ -46,6 +49,7 @@ class CrimeListFragment : Fragment() {
             mCrime = crime
             mTitleTextView?.text = mCrime?.getTitle()
             mDateTextView?.text = mCrime?.getDate().toString()
+            mSolvedImageView?.visibility = if (crime.isSolved() == true) View.VISIBLE else View.GONE
         }
 
         override fun onClick(p0: View?) {
