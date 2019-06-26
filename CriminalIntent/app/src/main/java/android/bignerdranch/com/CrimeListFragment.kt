@@ -1,6 +1,7 @@
 package android.bignerdranch.com
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -53,7 +54,8 @@ class CrimeListFragment : Fragment() {
         }
 
         override fun onClick(p0: View?) {
-            Toast.makeText(activity, mCrime?.getTitle() + " clicked!", Toast.LENGTH_SHORT).show()
+            val intent = CrimeActivity.newIntent(activity as Context, mCrime?.getId()!!)
+            startActivity(intent)
         }
     }
 
