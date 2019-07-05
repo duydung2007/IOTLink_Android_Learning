@@ -13,6 +13,20 @@ import java.util.*
 
 
 class CrimeFragment : Fragment() {
+
+    companion object {
+        private const val ARG_CRIME_ID = "crime_id"
+
+        fun newInstance(crimeId: UUID): CrimeFragment {
+            var args = Bundle()
+            args.putSerializable(ARG_CRIME_ID, crimeId)
+
+            var fragment = CrimeFragment()
+            fragment.arguments = args
+            return fragment
+        }
+    }
+
     private var mCrime: Crime? = null
     private var mTitleField: EditText? = null
     private var mDateButton: Button? = null
@@ -20,7 +34,7 @@ class CrimeFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val crimeId = activity?.intent?.getSerializableExtra(CrimeActivity.EXTRA_CRIME_ID) as UUID
+        val crimeId = arguments?.getSerializable(ARG_CRIME_ID) as UUID
         mCrime = CrimeLab.get(activity as Context)?.getCrime(crimeId)
     }
 
