@@ -10,7 +10,7 @@ class CrimeActivity : SingleFragmentActivity() {
     companion object {
         private const val EXTRA_CRIME_ID: String = "com.bignerdranch.android.criminalintent.crime_id"
 
-        public fun newIntent(packageContext: Context, crimeId: UUID): Intent? {
+        fun newIntent(packageContext: Context, crimeId: UUID): Intent? {
             val intent = Intent(packageContext, CrimeActivity::class.java)
             intent.putExtra(EXTRA_CRIME_ID, crimeId)
             return intent

@@ -25,12 +25,21 @@ class CrimeListFragment : Fragment() {
         return view
     }
 
+    override fun onResume() {
+        super.onResume()
+        updateUI()
+    }
+
     private fun updateUI() {
         val crimeLab = CrimeLab.get(activity as Context)
         val crimes = crimeLab?.getCrimes()
-        mAdapter = CrimeAdapter(crimes)
-        mCrimeRecyclerView?.adapter = mAdapter
-
+        if (mAdapter == null) {
+            mAdapter = CrimeAdapter(crimes)
+            mCrimeRecyclerView?.adapter = mAdapter
+        }
+        else {
+            mAdapter?.notifyDataSetChanged()
+        }
     }
 
     private inner class CrimeHolder(inflater: LayoutInflater, parent: ViewGroup)
