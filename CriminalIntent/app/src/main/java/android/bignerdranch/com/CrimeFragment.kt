@@ -16,6 +16,7 @@ class CrimeFragment : Fragment() {
 
     companion object {
         private const val ARG_CRIME_ID = "crime_id"
+        private const val DIALOG_DATE = "DialogDate"
 
         fun newInstance(crimeId: UUID): CrimeFragment {
             var args = Bundle()
@@ -58,7 +59,11 @@ class CrimeFragment : Fragment() {
 
         mDateButton = v.findViewById(R.id.crime_date) as Button
         mDateButton?.text = mCrime?.getDate().toString()
-        mDateButton?.isEnabled = false
+        mDateButton?.setOnClickListener {
+            val manager = fragmentManager
+            val dialog = DatePickerFragment()
+            dialog.show(manager, DIALOG_DATE)
+        }
 
         mSolvedCheckBox = v.findViewById(R.id.crime_solved) as CheckBox
         mSolvedCheckBox?.isChecked = mCrime?.isSolved()!!
