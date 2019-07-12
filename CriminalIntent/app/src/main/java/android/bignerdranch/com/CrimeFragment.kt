@@ -1,6 +1,8 @@
 package android.bignerdranch.com
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -17,6 +19,7 @@ class CrimeFragment : Fragment() {
     companion object {
         private const val ARG_CRIME_ID = "crime_id"
         private const val DIALOG_DATE = "DialogDate"
+        private const val REQUEST_DATE = 0
 
         fun newInstance(crimeId: UUID): CrimeFragment {
             var args = Bundle()
@@ -58,10 +61,11 @@ class CrimeFragment : Fragment() {
         })
 
         mDateButton = v.findViewById(R.id.crime_date) as Button
-        mDateButton?.text = mCrime?.getDate().toString()
+        updateDate()
         mDateButton?.setOnClickListener {
             val manager = fragmentManager
-            val dialog = DatePickerFragment()
+            val dialog = DatePickerFragment.newInstance(mCrime?.getDate()!!)
+            dialog.setTargetFragment(CrimeFragment@this, REQUEST_DATE)
             dialog.show(manager, DIALOG_DATE)
         }
 
@@ -74,5 +78,21 @@ class CrimeFragment : Fragment() {
         })
 
         return v
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode != Activity.RESULT_OK) {
+            return
+        }
+
+        if (requestCode == REQUEST_DATE) {
+            val date = data?.getSerializableExtra(DatePickerFragment.EXTRA_DATE) as Date
+            mCrime?.setDate(date)
+            updateDate()
+        }
+    }
+
+    private fun updateDate() {
+        mDateButton?.text = mCrime?.getDate().toString()
     }
 }
