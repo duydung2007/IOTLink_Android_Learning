@@ -71,11 +71,7 @@ class CrimeFragment : Fragment() {
 
         mSolvedCheckBox = v.findViewById(R.id.crime_solved) as CheckBox
         mSolvedCheckBox?.isChecked = mCrime?.isSolved()!!
-        mSolvedCheckBox?.setOnCheckedChangeListener(object : CompoundButton.OnCheckedChangeListener {
-            override fun onCheckedChanged(p0: CompoundButton?, p1: Boolean) {
-                mCrime?.setSolved(p1)
-            }
-        })
+        mSolvedCheckBox?.setOnCheckedChangeListener { _, p1 -> mCrime?.setSolved(p1) }
 
         return v
     }

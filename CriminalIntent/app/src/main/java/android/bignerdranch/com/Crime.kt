@@ -33,8 +33,8 @@ class Crime {
         mDate = date
     }
 
-    fun isSolved(): Boolean? {
-        return mSolved
+    fun isSolved(): Boolean {
+        return mSolved ?: false
     }
 
     fun setSolved(solved: Boolean) {

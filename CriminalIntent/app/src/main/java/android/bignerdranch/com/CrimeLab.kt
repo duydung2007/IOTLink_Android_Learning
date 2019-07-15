@@ -16,20 +16,18 @@ class CrimeLab {
         }
     }
 
-    private var mCrimes: List<Crime>? = null
+    private var mCrimes: ArrayList<Crime>? = null
 
     private constructor(context: Context) {
         mCrimes = ArrayList()
-        for (i in 0..100) {
-            var crime = Crime()
-            crime.setTitle("Crime #$i")
-            crime.setSolved(i % 2 == 0)
-            (mCrimes as ArrayList<Crime>).add(crime)
-        }
     }
 
     fun getCrimes(): List<Crime>? {
         return mCrimes
+    }
+
+    fun addCrime(crime: Crime) {
+        mCrimes?.add(crime)
     }
 
     fun getCrime(id: UUID): Crime? {
