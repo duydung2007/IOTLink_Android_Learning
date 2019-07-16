@@ -1,7 +1,6 @@
 package android.bignerdranch.com
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
@@ -10,7 +9,6 @@ import android.support.v7.widget.RecyclerView
 import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 
 class CrimeListFragment : Fragment() {
     companion object {
@@ -102,6 +100,7 @@ class CrimeListFragment : Fragment() {
             mCrimeRecyclerView?.adapter = mAdapter
         }
         else {
+            mAdapter?.setCrimes(crimes)
             mAdapter?.notifyDataSetChanged()
         }
         updateSubtitle()
@@ -157,5 +156,8 @@ class CrimeListFragment : Fragment() {
             }
         }
 
+        fun setCrimes(crimes: List<Crime>?) {
+            mCrimes = crimes
+        }
     }
 }

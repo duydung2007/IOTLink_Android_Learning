@@ -8,8 +8,13 @@ class Crime {
     private var mDate: Date? = null
     private var mSolved: Boolean? = null
 
-    init {
+    constructor() {
         mId = UUID.randomUUID()
+        mDate = Date()
+    }
+
+    constructor(id: UUID) {
+        mId = id
         mDate = Date()
     }
 
@@ -21,7 +26,7 @@ class Crime {
         return mTitle
     }
 
-    fun setTitle(title: String) {
+    fun setTitle(title: String?) {
         mTitle = title
     }
 

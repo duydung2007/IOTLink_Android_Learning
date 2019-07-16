@@ -42,6 +42,11 @@ class CrimeFragment : Fragment() {
         mCrime = CrimeLab.get(activity as Context)?.getCrime(crimeId)
     }
 
+    override fun onPause() {
+        super.onPause()
+        CrimeLab.get(activity as Context)?.updateCrime(mCrime!!)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.fragment_crime, container, false)
         mTitleField = v.findViewById(R.id.crime_title) as EditText
