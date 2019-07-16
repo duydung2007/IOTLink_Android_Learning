@@ -26,6 +26,7 @@ class CrimeLab {
             values.put(CrimeTable.Cols.TITLE, crime.getTitle())
             values.put(CrimeTable.Cols.DATE, crime.getDate()?.time)
             values.put(CrimeTable.Cols.SOLVED, if (crime.isSolved()) 1 else 0)
+            values.put(CrimeTable.Cols.SUSPECT, crime.getSuspect())
             return values
         }
     }

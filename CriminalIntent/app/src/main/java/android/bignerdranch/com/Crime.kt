@@ -7,6 +7,7 @@ class Crime {
     private var mTitle: String? = null
     private var mDate: Date? = null
     private var mSolved: Boolean? = null
+    private var mSuspect: String? = null
 
     constructor() {
         mId = UUID.randomUUID()
@@ -44,5 +45,13 @@ class Crime {
 
     fun setSolved(solved: Boolean) {
         mSolved = solved
+    }
+
+    fun getSuspect(): String? {
+        return mSuspect
+    }
+
+    fun setSuspect(suspect: String?) {
+        mSuspect = suspect
     }
 }
