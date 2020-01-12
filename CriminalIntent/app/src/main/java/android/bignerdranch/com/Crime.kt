@@ -54,4 +54,8 @@ class Crime {
     fun setSuspect(suspect: String?) {
         mSuspect = suspect
     }
+
+    fun getPhotoFilename(): String {
+        return "IMG_" + getId().toString() + ".jpg"
+    }
 }

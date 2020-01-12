@@ -5,16 +5,47 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <TextView
-            style="?android:listSeparatorTextViewStyle"
-            android:text="@string/crime_title_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-    <EditText
+    <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/crime_title_hint"
-            android:id="@+id/crime_title"/>
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp">
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+            <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:scaleType="centerInside"
+                    android:cropToPadding="true"
+                    android:background="@android:color/darker_gray"
+                    android:id="@+id/crime_photo"/>
+            <ImageButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:src="@android:drawable/ic_menu_camera"
+                    android:id="@+id/crime_camera"/>
+        </LinearLayout>
+        <LinearLayout
+                android:orientation="vertical"
+                android:padding="5dp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+            <TextView
+                    style="?android:listSeparatorTextViewStyle"
+                    android:text="@string/crime_title_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/crime_title_hint"
+                    android:id="@+id/crime_title"/>
+        </LinearLayout>
+    </LinearLayout>
     <TextView
             style="?android:listSeparatorTextViewStyle"
             android:text="@string/crime_details_label"

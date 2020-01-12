@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase
 import java.util.*
 import kotlin.collections.ArrayList
 import android.bignerdranch.com.database.CrimeDbSchema.CrimeTable
+import java.io.File
 
 class CrimeLab {
     companion object {
@@ -73,6 +74,11 @@ class CrimeLab {
             cursor?.close()
             return crime
         }
+    }
+
+    fun getPhotoFile(crime: Crime): File {
+        val filesDir = mContext?.filesDir
+        return File(filesDir, crime.getPhotoFilename())
     }
 
     fun updateCrime(crime: Crime) {
