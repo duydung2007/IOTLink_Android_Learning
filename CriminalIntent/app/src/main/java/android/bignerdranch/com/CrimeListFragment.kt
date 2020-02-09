@@ -17,6 +17,19 @@ class CrimeListFragment : Fragment() {
     private var mCrimeRecyclerView: RecyclerView? = null
     private var mAdapter: CrimeAdapter? = null
     private var mSubtitleVisible: Boolean = false
+    private var mCallbacks: Callbacks? = null
+
+    /**
+     * Required interface for hosting activities
+     */
+    interface Callbacks {
+        fun onCrimeSelected(crime: Crime)
+    }
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        mCallbacks = context as Callbacks
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_crime_list, container, false)
@@ -57,13 +70,18 @@ class CrimeListFragment : Fragment() {
         }
     }
 
+    override fun onDetach() {
+        super.onDetach()
+        mCallbacks = null
+    }
+
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when (item?.itemId) {
             R.id.new_crime -> {
                 val crime = Crime()
                 CrimeLab.get(context!!)?.addCrime(crime)
-                val intent = CrimePagerActivity.newIntent(context!!, crime.getId()!!)
-                startActivity(intent)
+                updateUI()
+                mCallbacks?.onCrimeSelected(crime)
                 true
             }
             R.id.show_subtitle -> {
@@ -92,7 +110,7 @@ class CrimeListFragment : Fragment() {
         activity.supportActionBar?.subtitle = subtitle
     }
 
-    private fun updateUI() {
+    fun updateUI() {
         val crimeLab = CrimeLab.get(activity as Context)
         val crimes = crimeLab?.getCrimes()
         if (mAdapter == null) {
@@ -127,8 +145,7 @@ class CrimeListFragment : Fragment() {
         }
 
         override fun onClick(p0: View?) {
-            val intent = CrimePagerActivity.newIntent(activity as Context, mCrime?.getId()!!)
-            startActivity(intent)
+            mCallbacks?.onCrimeSelected(mCrime!!)
         }
     }
 

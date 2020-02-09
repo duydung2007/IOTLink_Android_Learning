@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.activity_crime_pager.*
 import java.util.*
 
 
-class CrimePagerActivity : AppCompatActivity() {
+class CrimePagerActivity : AppCompatActivity(), CrimeFragment.Callbacks {
 
     companion object {
         private const val EXTRA_CRIME_ID = "com.bignerdranch.android.criminalintent.crime_id"
@@ -50,6 +50,10 @@ class CrimePagerActivity : AppCompatActivity() {
                 break
             }
         }
+    }
+
+    override fun onCrimeUpdated(crime: Crime) {
+
     }
 
 }
