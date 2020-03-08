@@ -118,7 +118,7 @@ class CrimeFragment : Fragment() {
             var i = Intent(Intent.ACTION_SEND)
             i.type = "text/plain"
             i.putExtra(Intent.EXTRA_TEXT, getCrimeReport())
-            i.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.crime_report_suspect))
+            i.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.crime_report_subject))
             i = Intent.createChooser(i, getString(R.string.send_report))
             startActivity(i)
         }
@@ -244,10 +244,12 @@ class CrimeFragment : Fragment() {
     private fun updatePhotoView() {
         if (mPhotoFile == null || !mPhotoFile!!.exists()) {
             mPhotoView?.setImageDrawable(null)
+            mPhotoView?.contentDescription = getString(R.string.crime_photo_no_image_description)
         }
         else {
             val bitmap = PictureUtils.getScaledBitmap(mPhotoFile?.path!!, activity as Activity)
             mPhotoView?.setImageBitmap(bitmap)
+            mPhotoView?.contentDescription = getString(R.string.crime_photo_image_description)
         }
     }
 }
