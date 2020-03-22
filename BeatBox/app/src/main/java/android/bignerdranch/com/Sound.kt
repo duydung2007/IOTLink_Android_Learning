@@ -2,6 +2,7 @@ package android.bignerdranch.com
 
 class Sound(private val mAssetPath: String) {
     private var mName: String? = null
+    private var mSoundId: Int? = null
 
     init {
         val components = mAssetPath.split("/")
@@ -15,5 +16,13 @@ class Sound(private val mAssetPath: String) {
 
     fun getName(): String? {
         return mName
+    }
+
+    fun getSoundId(): Int? {
+        return mSoundId
+    }
+
+    fun setSoundId(soundId: Int) {
+        mSoundId = soundId
     }
 }
