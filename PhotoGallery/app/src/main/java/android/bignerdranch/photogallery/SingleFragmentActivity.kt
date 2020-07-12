@@ -1,4 +1,4 @@
-package android.bignerdranch.nerdlauncher
+package android.bignerdranch.photogallery
 
 import android.os.Bundle
 import androidx.annotation.LayoutRes
