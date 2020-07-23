@@ -1,11 +1,16 @@
 package android.bignerdranch.photogallery
 
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.os.AsyncTask
 import android.os.Bundle
+import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,11 +27,25 @@ class PhotoGalleryFragment: Fragment() {
 
     private lateinit var mPhotoRecyclerView: RecyclerView
     private var mItems: MutableList<GalleryItem> = mutableListOf()
+    private lateinit var mThumbnailDownloader: ThumbnailDownloader<PhotoHolder>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         retainInstance = true
         FetchItemsTask().execute()
+
+        val responseHandler = Handler()
+        mThumbnailDownloader = ThumbnailDownloader(responseHandler)
+        mThumbnailDownloader.setThumbnailDownloadListener(object: ThumbnailDownloader.ThumbnailDownloadListener<PhotoHolder> {
+            override fun onThumbnailDownloaded(photoHolder: PhotoHolder, bimap: Bitmap) {
+                val drawable = BitmapDrawable(resources, bimap)
+                photoHolder.bindDrawable(drawable)
+            }
+        })
+
+        mThumbnailDownloader.start()
+        mThumbnailDownloader.looper
+        Log.i(TAG, "Background thread started")
     }
 
     override fun onCreateView(
@@ -41,6 +60,17 @@ class PhotoGalleryFragment: Fragment() {
         return view
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        mThumbnailDownloader.clearQueue()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mThumbnailDownloader.quit()
+        Log.i(TAG, "Background thread destroyed")
+    }
+
     private fun setupAdapter() {
         if (isAdded) {
             mPhotoRecyclerView.adapter = PhotoAdapter(mItems)
@@ -48,14 +78,14 @@ class PhotoGalleryFragment: Fragment() {
     }
 
     private inner class PhotoHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private var mTitleTextView: TextView? = null
+        private var mItemImageView: ImageView? = null
 
         init {
-            mTitleTextView = itemView as TextView
+            mItemImageView = itemView.findViewById(R.id.item_image_view) as ImageView
         }
 
-        fun bindGalleryItem(item: GalleryItem) {
-            mTitleTextView?.text = item.toString()
+        fun bindDrawable(drawable: Drawable) {
+            mItemImageView?.setImageDrawable(drawable)
         }
     }
 
@@ -67,17 +97,21 @@ class PhotoGalleryFragment: Fragment() {
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoHolder {
-            val textView = TextView(activity)
-            return PhotoHolder(textView)
+            val inflater = LayoutInflater.from(activity)
+            val view = inflater.inflate(R.layout.list_item_gallery, parent, false)
+            return PhotoHolder(view)
         }
 
         override fun getItemCount(): Int {
             return mGalleryItems.size
         }
 
-        override fun onBindViewHolder(holder: PhotoHolder, position: Int) {
+        override fun onBindViewHolder(photoHolder: PhotoHolder, position: Int) {
             val galleryItem: GalleryItem = mGalleryItems[position]
-            holder.bindGalleryItem(galleryItem)
+            val placeholder = resources.getDrawable(R.drawable.bill_up_close)
+            photoHolder.bindDrawable(placeholder)
+            mThumbnailDownloader.queueThumbnail(photoHolder, galleryItem.getUrl())
+
         }
     }
 
