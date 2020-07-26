@@ -1,5 +1,6 @@
 package android.bignerdranch.photogallery
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
@@ -7,10 +8,9 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ImageView
+import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -32,7 +32,8 @@ class PhotoGalleryFragment: Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         retainInstance = true
-        FetchItemsTask().execute()
+        setHasOptionsMenu(true)
+        updateItems()
 
         val responseHandler = Handler()
         mThumbnailDownloader = ThumbnailDownloader(responseHandler)
@@ -71,6 +72,48 @@ class PhotoGalleryFragment: Fragment() {
         Log.i(TAG, "Background thread destroyed")
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater?.inflate(R.menu.fragment_photo_gallery, menu)
+        val searchItem = menu?.findItem(R.id.menu_item_search)
+        val searchView = searchItem?.actionView as SearchView
+        searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                Log.d(TAG, "QueryTextSubmit: $query")
+                QueryPreferences.setStoredQuery(activity as Context, query)
+                updateItems()
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                Log.d(TAG, "onQueryTextChange: $newText")
+                return false
+            }
+        })
+
+        searchView.setOnSearchClickListener {
+            val query = QueryPreferences.getStoredQuery(activity as Context)
+            searchView.setQuery(query,false)
+        }
+
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_item_clear -> {
+                QueryPreferences.setStoredQuery(activity as Context, null)
+                updateItems()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun updateItems() {
+        val query = QueryPreferences.getStoredQuery(activity as Context)
+        FetchItemsTask(query).execute()
+    }
+
     private fun setupAdapter() {
         if (isAdded) {
             mPhotoRecyclerView.adapter = PhotoAdapter(mItems)
@@ -89,12 +132,7 @@ class PhotoGalleryFragment: Fragment() {
         }
     }
 
-    private inner class PhotoAdapter(galleryItems: MutableList<GalleryItem>): RecyclerView.Adapter<PhotoHolder>() {
-        private var mGalleryItems: MutableList<GalleryItem> = mutableListOf()
-
-        init {
-            mGalleryItems = galleryItems
-        }
+    private inner class PhotoAdapter(var mGalleryItems: MutableList<GalleryItem>): RecyclerView.Adapter<PhotoHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoHolder {
             val inflater = LayoutInflater.from(activity)
@@ -115,9 +153,14 @@ class PhotoGalleryFragment: Fragment() {
         }
     }
 
-    private inner class FetchItemsTask: AsyncTask<Void, Void, MutableList<GalleryItem>>() {
+    private inner class FetchItemsTask(var mQuery: String?): AsyncTask<Void, Void, MutableList<GalleryItem>>() {
+
         override fun doInBackground(vararg p0: Void?): MutableList<GalleryItem> {
-            return FlickrFetchr().fetchItems()
+            return if (mQuery == null) {
+                FlickrFetchr().fetchRecentPhotos()
+            } else {
+                FlickrFetchr().searchPhotos(mQuery)
+            }
         }
 
         override fun onPostExecute(items: MutableList<GalleryItem>) {
