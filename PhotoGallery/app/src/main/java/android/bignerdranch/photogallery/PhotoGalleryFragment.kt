@@ -11,11 +11,10 @@ import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import android.widget.SearchView
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class PhotoGalleryFragment: Fragment() {
+class PhotoGalleryFragment: VisibleFragment() {
 
     companion object {
         private const val TAG = "PhotoGalleryFragment"

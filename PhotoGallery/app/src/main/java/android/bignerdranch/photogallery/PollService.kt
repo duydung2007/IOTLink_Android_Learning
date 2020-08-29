@@ -17,11 +17,19 @@ class PollService: IntentService(TAG) {
     companion object {
         private const val TAG = "PollService"
 
-        private val POLL_INTERVAL_MS = TimeUnit.MINUTES.toMillis(15L)
+        private val POLL_INTERVAL_MS = TimeUnit.MINUTES.toMillis(1L)
+
+        const val ACTION_SHOW_NOTIFICATION = "com.bignerdranch.android.photogallery.SHOW_NOTIFICATION"
+
+        const val PERM_PRIVATE = "com.bignerdranch.android.photogallery.PRIVATE"
+
+        const val REQUEST_CODE = "REQUEST_CODE"
+
+        const val NOTIFICATION = "NOTIFICATION"
 
         private const val CHANNEL_DEFAULT = "CHANNEL_DEFAULT"
 
-        fun newIntent(context: Context): Intent {
+        private fun newIntent(context: Context): Intent {
             return Intent(context, PollService::class.java)
         }
 
@@ -36,6 +44,7 @@ class PollService: IntentService(TAG) {
                 alarmManager.cancel(pi)
                 pi.cancel()
             }
+            QueryPreferences.setAlarmOn(context, isOn)
         }
 
         fun isServiceAlarmOn(context: Context): Boolean {
@@ -87,9 +96,16 @@ class PollService: IntentService(TAG) {
                 // or other notification behaviors after this
                 notificationManager.createNotificationChannel(mChannel)
             }
-            notificationManager.notify(0, notification)
+            showBackgroundNotification(0, notification)
         }
         QueryPreferences.setLastResultId(this, resultId)
+    }
+
+    private fun showBackgroundNotification(requestCode: Int, notification: Notification) {
+        val i = Intent(ACTION_SHOW_NOTIFICATION)
+        i.putExtra(REQUEST_CODE, requestCode)
+        i.putExtra(NOTIFICATION, notification)
+        sendOrderedBroadcast(i, PERM_PRIVATE, null, null, Activity.RESULT_OK, null, null)
     }
 
     private fun isNetworkAvailableAndConnected(): Boolean {
