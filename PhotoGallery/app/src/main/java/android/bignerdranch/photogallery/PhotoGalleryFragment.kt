@@ -1,6 +1,7 @@
 package android.bignerdranch.photogallery
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
@@ -132,15 +133,27 @@ class PhotoGalleryFragment: VisibleFragment() {
         }
     }
 
-    private inner class PhotoHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    private inner class PhotoHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+
         private var mItemImageView: ImageView? = null
+        private var mGalleryItem: GalleryItem? = null
 
         init {
             mItemImageView = itemView.findViewById(R.id.item_image_view) as ImageView
+            itemView.setOnClickListener(this)
         }
 
         fun bindDrawable(drawable: Drawable) {
             mItemImageView?.setImageDrawable(drawable)
+        }
+
+        fun bindGalleryItem(galleryItem: GalleryItem?) {
+            mGalleryItem = galleryItem
+        }
+
+        override fun onClick(v: View?) {
+            val i = PhotoPageActivity.newIntent(activity, mGalleryItem?.getPhotoPageUri())
+            startActivity(i)
         }
     }
 
@@ -160,6 +173,7 @@ class PhotoGalleryFragment: VisibleFragment() {
             val galleryItem: GalleryItem = mGalleryItems[position]
             val placeholder = resources.getDrawable(R.drawable.bill_up_close)
             photoHolder.bindDrawable(placeholder)
+            photoHolder.bindGalleryItem(galleryItem)
             mThumbnailDownloader.queueThumbnail(photoHolder, galleryItem.getUrl())
 
         }
