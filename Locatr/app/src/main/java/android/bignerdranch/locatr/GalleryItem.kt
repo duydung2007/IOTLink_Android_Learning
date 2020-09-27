@@ -1,4 +1,4 @@
-package android.bignerdranch.photogallery
+package android.bignerdranch.locatr
 
 import android.net.Uri
 

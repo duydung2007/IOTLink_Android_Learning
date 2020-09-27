@@ -1,5 +1,6 @@
-package android.bignerdranch.photogallery
+package android.bignerdranch.locatr
 
+import android.location.Location
 import android.net.Uri
 import android.util.Log
 import org.json.JSONArray
@@ -64,6 +65,11 @@ class FlickrFetchr {
         return downloadGalleryItems(url)
     }
 
+    fun searchPhotos(location: Location): MutableList<GalleryItem> {
+        val url = buildUrl(location)
+        return downloadGalleryItems(url)
+    }
+
     private fun downloadGalleryItems(url: String): MutableList<GalleryItem> {
         var items: MutableList<GalleryItem> = mutableListOf()
         try {
@@ -87,6 +93,14 @@ class FlickrFetchr {
             uriBuilder.appendQueryParameter("text", query)
         }
         return uriBuilder.build().toString()
+    }
+
+    private fun buildUrl(location: Location): String {
+        return ENDPOINT.buildUpon()
+            .appendQueryParameter("method", SEARCH_METHOD)
+            .appendQueryParameter("lat", location.latitude.toString())
+            .appendQueryParameter("lon", location.longitude.toString())
+            .build().toString()
     }
 
     @Throws(IOException::class, JSONException::class)
