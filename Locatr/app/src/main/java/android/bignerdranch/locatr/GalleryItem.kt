@@ -7,6 +7,8 @@ class GalleryItem {
     private var mId: String? = null
     private var mUrl: String? = null
     private var mOwner: String? = null
+    private var mLat: Double = 0.0
+    private var mLon: Double = 0.0
 
     override fun toString(): String {
         return mCaption ?: ""
@@ -50,5 +52,21 @@ class GalleryItem {
             .appendPath(mOwner)
             .appendPath(mId)
             .build()
+    }
+
+    fun getLat(): Double {
+        return mLat
+    }
+
+    fun setLat(lat: Double) {
+        mLat = lat
+    }
+
+    fun getLon(): Double {
+        return mLon
+    }
+
+    fun setLon(lon: Double) {
+        mLon = lon
     }
 }
