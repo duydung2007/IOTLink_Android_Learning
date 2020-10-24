@@ -218,7 +218,7 @@ class CrimeFragment : Fragment() {
         mDateButton?.text = mCrime?.getDate().toString()
     }
 
-    fun getCrimeReport(): String? {
+    private fun getCrimeReport(): String? {
         var solvedString: String? = if (mCrime!!.isSolved()) {
             getString(R.string.crime_report_solved)
         } else {
